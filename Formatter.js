@@ -31,6 +31,34 @@ Tokenizer.defaultTokens = {
 };
 function Formatter(){
 };
+Formatter.prototype.parsePath = function(str){
+        var tokenizer = new Tokenizer(str);
+        var token = tokenizer.nextToken();
+        if (token[0] !== "IDENTIFIER") {
+            throw new Error("Expected identifier, got "+tokenizer.getContent(token));
+        }
+        var elements = [tokenizer.getContent(token)]; 
+        while (token = tokenizer.nextToken()) {
+            var elem = "";
+            if (tokenizer.getContent(token) == "[") {
+                while (token = tokenizer.nextToken()) {
+                    if (token == "]") break;
+                    elem+=tokenizer.getContent(token);
+                }
+            }else if (token == ".") {
+                token = tokenizer.nextToken();
+                if (token[0] != "IDENTIFIER") {
+                    throw new Error("Expected identifier, found: "+JSON.stringify(token));
+                }
+                elem+=tokenizer.getContent(token);
+            } else {
+                throw new Error("Unexpected "+token);
+            }
+            elements.push(elem);
+            
+        }
+        return elements;
+}
 Formatter.prototype.parse = function(format_str){
     var leading = "";
     var token;
@@ -47,31 +75,30 @@ Formatter.prototype.parse = function(format_str){
         }
         var identifier=token[1], conversion, formatStr;
         while (token = tokenizer.nextToken()) {
-            if(tokenizer.getContent(token) == "[") {
+            if (tokenizer.getContent(token) == "[") {
                 identifier+="[";
                 while (token = tokenizer.nextToken()) {
                     if(token == "]") break;
                     identifier+=tokenizer.getContent(token);
                 }
                 identifier+="]";
-                continue;
-            }else
-            if (token == ".") {
+            }else if (token == ".") {
                 identifier+=".";
                 token = tokenizer.nextToken();
                 if (token[0] != "IDENTIFIER") {
                     throw new Error("Expected identifier, found: "+JSON.stringify(token));
                 }
                 identifier+=tokenizer.getContent(token);
-                continue;
+            } else {
+                break;
             }
-            break;
+            
         }
-        if(token[0] == "CONVERSION"){
+        if (token[0] == "CONVERSION") {
             conversion = tokenizer.getContent(token);
             token = tokenizer.nextToken();
         }
-        if(token == ":"){
+        if (token == ":") {
             formatStr = "";
             while(token = tokenizer.nextToken()){
                 if (token == "}") break;
@@ -87,5 +114,33 @@ Formatter.prototype.parse = function(format_str){
     if (leading)
             yields.push([leading, null, null, null]);
     return yields;
+};
+Formatter.prototype.deepGet = function(obj, path){
+    for (var i = 0; i < path.length; i++) {
+        if (!obj.hasOwnProperty(path[i])) {
+            return null;
+        }
+        obj = obj[path[i]];
+    }
+    return obj;
+};
+Formatter.prototype.format = function(string, args){
+    var tokens = this.parse(string);
+    var resultString = "";
+    for (var i = 0; i < tokens.length; i++) {
+        resultString += tokens[i][0];
+        if(tokens[i][1] === null) continue;
+        var value = this.deepGet(args, this.parsePath(tokens[i][1]));
+        if (!value) {
+            throw new Error(tokens[i][1] + " not found in arguments!");
+        }
+        
+        if (!tokens[i][2] && value.format) {
+            value = value.format(tokens[i][2]);
+        }
+        resultString += value;
+        //I don't know what to do with the conversion specifier yet
+    }
+    return resultString;
 };
 module.exports = Formatter;

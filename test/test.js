@@ -58,4 +58,36 @@ describe("Formatter", function(){
             );
         });
     });
+    describe("#format", function(){
+        var formatter = new Formatter();
+        it("should handle simple formatting!", function(){
+            assert.equal(formatter.format("Hello, {what}!", {"what": "World!"}), "Hello, World!!");
+        });
+        it("should handle simple deep paths!", function(){
+                assert.equal(formatter.format("Hello, {what.in.the.what}!",
+                                {
+                                "what": {
+                                "in":{
+                                "the":{
+                                "what":"World"
+                                }
+                                }
+                                }
+                                }
+                         ), "Hello, World!");
+        });
+        it("should handle simple deep paths!", function(){
+                assert.equal(formatter.format("Hello, {what[in].the.what}!",
+                                {
+                                "what": {
+                                "in":{
+                                "the":{
+                                "what":"World"
+                                }
+                                }
+                                }
+                                }
+                         ), "Hello, World!");
+        });
+    });
 });

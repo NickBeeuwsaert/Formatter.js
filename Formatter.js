@@ -135,7 +135,7 @@ Formatter.prototype.format = function(string, args){
             throw new Error(tokens[i][1] + " not found in arguments!");
         }
         
-        if (!tokens[i][2] && value.format) {
+        if (tokens[i][2] && value.format && typeof value.format == "function") {
             value = value.format(tokens[i][2]);
         }
         resultString += value;

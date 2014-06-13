@@ -89,5 +89,14 @@ describe("Formatter", function(){
                                 }
                          ), "Hello, World!");
         });
+        it("should handle format methods!", function(){
+                        var hasFormat = {
+                        "format": function(fmtString){
+                        return fmtString.split('').reverse().join('');
+                        }
+                        };
+                        assert.equal(formatter.format("Hello, {test:%Y %m %d}!", {"test": hasFormat}
+                                        ), "Hello, d% m% Y%!");
+        });
     });
 });

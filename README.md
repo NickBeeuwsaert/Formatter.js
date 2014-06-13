@@ -10,7 +10,8 @@ Check it! you can do this!
 	
 Aint that the neatest!
 
-	What about this stuff!
+What about this stuff!
+
 	var blap = {
 		"format": function(fmtString){
 			return "IDK what to do with this but whatever.";

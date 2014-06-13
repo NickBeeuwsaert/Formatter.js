@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/NickBeeuwsaert/Formatter.js.svg?branch=master)](https://travis-ci.org/NickBeeuwsaert/Formatter.js)
 #README
 ---
 This is a javascript project for parsing format strings!

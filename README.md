@@ -15,7 +15,7 @@ What about this stuff!
 
 	var blap = {
 		"format": function(fmtString){
-			return "IDK what to do with this but whatever.";
+			return "reversed format string" + fmtString.split('').reverse().join('');
 		};
 	};
-	console.log(formatter.format("Hello, {blap}", {"blap": blap}));
+	console.log(formatter.format("Hello, {blap:%Y %m %d}", {"blap": blap}));

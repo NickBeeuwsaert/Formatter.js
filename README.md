@@ -29,8 +29,8 @@ Format strings follow grammar similar to how pythons `string.format` works, with
     integer           ::=  [0-9]+
     element_index     ::=  integer | index_string
     index_string      ::=  <any character that is not "]">+
-    conversion        ::=  any single character right now
-    format_spec       ::=  Any character that isn't "}"
+    conversion        ::=  [a-zA-Z0-9]
+    format_spec       ::=  <Any character that isn't "}">*
     
 ##Example usage
 Example node.js session using Formatter

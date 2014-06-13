@@ -56,6 +56,25 @@ describe("Formatter", function(){
                     ["Hello, ", "world[some].deep.array", undefined, undefined]
                 ]
             );
+            assert.deepEqual(formatter.parse("Hello, {world[0].deep.array}"), 
+                [
+                    ["Hello, ", "world[0].deep.array", undefined, undefined]
+                ]
+            );
+            assert.deepEqual(formatter.parse("Hello, {world[some].0.array}"), 
+                [
+                    ["Hello, ", "world[some].0.array", undefined, undefined]
+                ]
+            );
+        });
+        it("Should be able to handle identifiers or integers as the first element", function(){
+            var formatter = new Formatter();
+            assert.deepEqual(formatter.parse("Hello, {0}!", ["world"]),
+                [
+                    ["Hello, ", "0", undefined, undefined],
+                    ["!", undefined, undefined, undefined]
+                ]
+            );
         });
     });
     describe("#format", function(){
@@ -97,6 +116,12 @@ describe("Formatter", function(){
                         };
                         assert.equal(formatter.format("Hello, {test:%Y %m %d}!", {"test": hasFormat}
                                         ), "Hello, d% m% Y%!");
+        });
+        it("should handle paths with array indices", function(){
+                        assert.equal(formatter.format("Hello, {test.0}!", {"test": ["world", "mars"]}
+                                        ), "Hello, world!");
+                        assert.equal(formatter.format("Hello, {test[0]}!", {"test": ["world", "mars"]}
+                                        ), "Hello, world!");
         });
     });
 });

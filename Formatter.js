@@ -34,8 +34,8 @@ function Formatter(){
 Formatter.prototype.parsePath = function(str){
         var tokenizer = new Tokenizer(str);
         var token = tokenizer.nextToken();
-        if (token[0] !== "IDENTIFIER") {
-            throw new Error("Expected identifier, got "+tokenizer.getContent(token));
+        if (!(token[0] === "IDENTIFIER" || token[0] === "NUMBER")) {
+            throw new Error("Expected identifier or number, got "+tokenizer.getContent(token));
         }
         var elements = [tokenizer.getContent(token)]; 
         while (token = tokenizer.nextToken()) {
@@ -47,8 +47,8 @@ Formatter.prototype.parsePath = function(str){
                 }
             }else if (token == ".") {
                 token = tokenizer.nextToken();
-                if (token[0] != "IDENTIFIER") {
-                    throw new Error("Expected identifier, found: "+JSON.stringify(token));
+                if (!(token[0] === "IDENTIFIER" || token[0] === "NUMBER")) {
+                    throw new Error("Expected identifier or number, found: "+JSON.stringify(token));
                 }
                 elem+=tokenizer.getContent(token);
             } else {
@@ -70,8 +70,8 @@ Formatter.prototype.parse = function(format_str){
             continue;
         }
         token = tokenizer.nextToken();
-        if (token[0] != "IDENTIFIER") {
-            throw new Error("Expected a identifier, found: "+JSON.stringify(token));
+        if (!(token[0] === "IDENTIFIER" || token[0] === "NUMBER")) {
+            throw new Error("Expected a identifier or a number, found: "+JSON.stringify(token));
         }
         var identifier=token[1], conversion, formatStr;
         while (token = tokenizer.nextToken()) {
@@ -85,8 +85,8 @@ Formatter.prototype.parse = function(format_str){
             }else if (token == ".") {
                 identifier+=".";
                 token = tokenizer.nextToken();
-                if (token[0] != "IDENTIFIER") {
-                    throw new Error("Expected identifier, found: "+JSON.stringify(token));
+                if (!(token[0] === "IDENTIFIER" || token[0] === "NUMBER")) {
+                    throw new Error("Expected identifier or number, found: "+JSON.stringify(token));
                 }
                 identifier+=tokenizer.getContent(token);
             } else {
@@ -112,7 +112,7 @@ Formatter.prototype.parse = function(format_str){
         leading = "";       
     }
     if (leading)
-            yields.push([leading, null, null, null]);
+            yields.push([leading, undefined, undefined, undefined]);
     return yields;
 };
 Formatter.prototype.deepGet = function(obj, path){
@@ -129,7 +129,7 @@ Formatter.prototype.format = function(string, args){
     var resultString = "";
     for (var i = 0; i < tokens.length; i++) {
         resultString += tokens[i][0];
-        if(tokens[i][1] === null) continue;
+        if(tokens[i][1] === undefined) continue;
         var value = this.deepGet(args, this.parsePath(tokens[i][1]));
         if (!value) {
             throw new Error(tokens[i][1] + " not found in arguments!");

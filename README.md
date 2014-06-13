@@ -2,22 +2,6 @@
 #README
 This is a javascript project for parsing format strings!
 
-Check it! you can do this!
-
-	var formatter = new Formatter();
-	formatter.format("Hello, {world}!", {"world": "MARS!"});
-	// -> "Hello, world!!"
-	
-Aint that the neatest!
-
-What about this stuff!
-
-	var blap = {
-		"format": function(fmtString){
-			return "reversed format string" + fmtString.split('').reverse().join('');
-		}
-	};
-	console.log(formatter.format("Hello, {blap:%Y %m %d}", {"blap": blap}));
 
 ##Format String Grammar
 Format strings follow grammar similar to how pythons `string.format` works, with a few modifications (mostly no auto incrementing positional arguments (like {}))

@@ -24,6 +24,15 @@ Tokenizer.prototype.getContent = function(token){
     }
     return token[1];
 };
+Tokenizer.prototype.stringifyToken = function(token){
+    if (token === false) {
+        return "EOF";
+    }
+    if (typeof token === "string") {
+        return JSON.stringify(token);
+    }
+    return token[0]+": "+JSON.stringify(token[1]);
+};
 Tokenizer.defaultTokens = {
     "IDENTIFIER": "[a-zA-Z_][a-zA-Z0-9_]*",
     "NUMBER": "[0-9]+",
@@ -35,7 +44,7 @@ Formatter.prototype.parsePath = function(str){
         var tokenizer = new Tokenizer(str);
         var token = tokenizer.nextToken();
         if (!(token[0] === "IDENTIFIER" || token[0] === "NUMBER")) {
-            throw new Error("Expected identifier or number, got "+tokenizer.getContent(token));
+            throw new Error("Expected identifier or number, got "+tokenizer.stringifyToken(token));
         }
         var elements = [tokenizer.getContent(token)]; 
         while (token = tokenizer.nextToken()) {
@@ -48,11 +57,11 @@ Formatter.prototype.parsePath = function(str){
             }else if (token == ".") {
                 token = tokenizer.nextToken();
                 if (!(token[0] === "IDENTIFIER" || token[0] === "NUMBER")) {
-                    throw new Error("Expected identifier or number, found: "+JSON.stringify(token));
+                    throw new Error("Expected identifier or number, found: "+tokenizer.stringifyToken(token));
                 }
                 elem+=tokenizer.getContent(token);
             } else {
-                throw new Error("Unexpected "+token);
+                throw new Error("Unexpected "+tokenizer.stringifyToken(token));
             }
             elements.push(elem);
             
@@ -71,7 +80,7 @@ Formatter.prototype.parse = function(format_str){
         }
         token = tokenizer.nextToken();
         if (!(token[0] === "IDENTIFIER" || token[0] === "NUMBER")) {
-            throw new Error("Expected a identifier or a number, found: "+JSON.stringify(token));
+            throw new Error("Expected a identifier or a number, got "+tokenizer.stringifyToken(token));
         }
         var identifier=token[1], conversion, formatStr;
         while (token = tokenizer.nextToken()) {
@@ -86,7 +95,7 @@ Formatter.prototype.parse = function(format_str){
                 identifier+=".";
                 token = tokenizer.nextToken();
                 if (!(token[0] === "IDENTIFIER" || token[0] === "NUMBER")) {
-                    throw new Error("Expected identifier or number, found: "+JSON.stringify(token));
+                    throw new Error("Expected identifier or number, got "+tokenizer.stringifyToken(token));
                 }
                 identifier+=tokenizer.getContent(token);
             } else {
@@ -106,7 +115,7 @@ Formatter.prototype.parse = function(format_str){
             }
         }
         if (token != "}") {
-            throw new Errot("ERROR: Expected '}', found: "+tokenizer.getContent(token));
+            throw new Error("Expected '}', got "+tokenizer.stringifyToken(token));
         }
         yields.push([leading, identifier, formatStr, conversion]);
         leading = "";       

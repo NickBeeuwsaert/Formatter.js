@@ -31,4 +31,6 @@ Example node.js session using Formatter
 	'Hello, Nick Beeuwsaert!'
 	> formatter.format("Hello, {0} {1}! todays date is {2.currentDay:%B %o, %Y} and the current time is {2.currentDay:%H:%M:%S}!", ["Nick", "Beeuwsaert", {currentDay: new Date()}]);
 	'Hello, Nick Beeuwsaert! todays date is June 13th, 2014 and the current time is 15:34:52!'
+    > formatter.format("Here's a quote: {0!r}", ["They say \"2 + 2 = 5\"..."])
+    'Here's a quote: "They say \"2 + 2 = 5\"..."'
     

@@ -138,6 +138,9 @@ Formatter.prototype.format = function(string, args){
         if (tokens[i][2] && value.format && typeof value.format == "function") {
             value = value.format(tokens[i][2]);
         }
+        if (tokens[i][3] == "!r") {
+            value = JSON.stringify(value);
+        }
         resultString += value;
         //I don't know what to do with the conversion specifier yet
     }

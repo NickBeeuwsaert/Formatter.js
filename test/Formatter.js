@@ -123,5 +123,9 @@ describe("Formatter", function(){
                         assert.equal(formatter.format("Hello, {test[0]}!", {"test": ["world", "mars"]}
                                         ), "Hello, world!");
         });
+        it("should handle conversion strings", function(){
+                        assert.equal(formatter.format("This string needs escaped quotes: {0!r}", ["What's up? \"Hello\""])
+                                        , "This string needs escaped quotes: \"What's up? \\\"Hello\\\"\"");
+        });
     });
 });
